@@ -84,6 +84,12 @@ class Math:
         print("均值：", self._mean)
         print("标准差：", self._std)
         print("依次向下找到自己的运气区间即可")
+
+        import matplotlib.pyplot as plt
+        plt.xlabel("次数")
+        plt.title("人数")
+        plt.hist(self._nums)
+        plt.show()
         a = self.normal()
         b = self.rare()
         c = self.super_rare()
@@ -102,5 +108,5 @@ class Math:
 
 if __name__ == '__main__':
     l = numpy.random.normal(200, 20, 10000000)
-m = Math(l)
-m.output()
+    m = Math(l)
+    m.output()

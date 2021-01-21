@@ -6,6 +6,7 @@ DESCRIBE: 小工具
 """
 import random
 from typing import List, Dict
+import math_tool
 
 random.seed()
 
@@ -31,27 +32,37 @@ class Cards:
             self.p.append(t)
             self.if_get[card.name] = False
             self.cards_map[card.name] = card
+        self.p.append(1)
+        self.if_get["剩下的卡"] = False
+        c = Card(0, "剩下的卡")
+        self.cards_map["剩下的卡"] = c
+        self.cards.append(c)
         self.num = 0  # 已抽卡次数
 
     def normal_draw(self) -> Card:
         """
-普通的抽一张卡
+普通的抽一张卡, 当cards概率之和不为1
         :return: 享元的引用
         """
         self.num += 1
         t = random.random()
-
+        """
         # 二分查找变形，找到落在那个区间内
         left = 0
         right = len(self.p) - 1
-        while left < right:
+        while left <= right:
             mid = (left + right) // 2
             v = self.p[mid]
             if v > t:
                 right = mid - 1
             elif v <= t:
                 left = mid + 1
-        return self.cards[right - 1]
+        """
+        index = 0
+        while not self.p[index] > t:
+            index += 1  # todo: 改成二分版的
+        self.if_get[self.cards[index].name] = True
+        return self.cards[index]
 
     def reset(self):
         """
@@ -70,11 +81,13 @@ class Group:
 
 class Mode:
     # 抽卡模式 享元模式
-    def __init__(self, num):
+    def __init__(self, num=10, max_n=1000000):
         """
+        :param max_n:仿真多少抽
         :param num:  默认以多少连抽进行
         """
         self.num = num
+        self.max = max_n
 
 
 class Target:
@@ -98,8 +111,54 @@ class Target:
         p = self.pattern
         for s in self.card_names:
             p = p.replace(s, str(self.cards.if_get[s]))
-        return exec(p)
+        return eval(p)
 
 
 class Limit:
     # 保底
+    pass  # TODO
+
+
+class Drawer:
+    def __init__(self, m: Mode, c: Cards, g: List[Group], l: Limit, t: Target):
+        self._m = m
+        self._c = c
+        self._g = g
+        self._l = l
+        self._t = t
+        self.used = False
+
+    def draw_with_no_limit(self) -> int:
+        self.used = True
+
+        while not self._t.if_suc():
+            for i in range(self._m.num):
+                self._c.normal_draw()
+
+        return self._c.num
+
+    def reset(self):
+        self.used = False
+        self._c.reset()
+
+
+if __name__ == '__main__':
+    c = []
+    c.append(Card(0.02, "可畏"))
+    c.append(Card(0.02, "扎拉"))
+    c.append(Card(0.02, "波拉"))
+    c.append(Card(0.025, "文琴佐"))
+    c.append(Card(0.025, "朱利奥"))
+    c.append(Card(0.002, "利托里奥"))
+    cards = Cards(c)
+    t = Target("可畏 and 扎拉 and 波拉 and 利托里奥", cards)
+    g = []
+    m = Mode(1, 1000)
+    d = Drawer(m, cards, [], Limit(), t)
+    l = []
+    for i in range(m.max):
+        l.append(d.draw_with_no_limit())
+        d.reset()
+
+    m = math_tool.Math(l)
+    m.output()
