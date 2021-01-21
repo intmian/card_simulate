@@ -88,7 +88,8 @@ class Math:
         import matplotlib.pyplot as plt
         plt.xlabel("次数")
         plt.title("人数")
-        plt.hist(self._nums)
+
+        plt.hist(self._nums,bins=100)
         plt.show()
         a = self.normal()
         b = self.rare()

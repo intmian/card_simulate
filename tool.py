@@ -95,12 +95,18 @@ class Target:
     def __init__(self, pattern: str, cards: Cards):
         self.cards = cards
 
-        self.pattern = pattern
+        self.parts = []
         strings = pattern.split()
         self.card_names = []
+        n = 0
         for s in strings:
-            if s not in [" ", "(", ")", "and", "or", "not"] and s not in self.card_names:
+            # 若为卡名则直接存入数组中
+            if s not in [" ", "(", ")", "and", "or", "not"]:
                 self.card_names.append(s)
+                self.parts.append(n)
+                n += 1
+            else:
+                self.parts.append(s)
         # 将 a and not c 处理成 {} and not {} ,之后每次校验时按顺序将真值代入
 
     def if_suc(self) -> bool:
@@ -108,9 +114,13 @@ class Target:
 判断是否成功。此版本的效率非常低，下次应该构建二叉树，并用解释器模块，并使用胜者树思想，使时间效率为O(1)
         :return: 是否达成目标
         """
-        p = self.pattern
-        for s in self.card_names:
-            p = p.replace(s, str(self.cards.if_get[s]))
+        p = ""
+        for part in self.parts:
+            if type(part) is str:
+                p += part + " "
+            else:
+                p += str(self.cards.if_get[self.card_names[part]]) + " "  # 此时存的是标号
+
         return eval(p)
 
 
@@ -149,11 +159,11 @@ if __name__ == '__main__':
     c.append(Card(0.02, "波拉"))
     c.append(Card(0.025, "文琴佐"))
     c.append(Card(0.025, "朱利奥"))
-    c.append(Card(0.002, "利托里奥"))
+    c.append(Card(0.005, "利托里奥"))
     cards = Cards(c)
     t = Target("可畏 and 扎拉 and 波拉 and 利托里奥", cards)
     g = []
-    m = Mode(1, 1000)
+    m = Mode(1, 10000)
     d = Drawer(m, cards, [], Limit(), t)
     l = []
     for i in range(m.max):
