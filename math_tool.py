@@ -67,6 +67,7 @@ class Math:
             ri, rv = binary_search(self._nums, right, False)
         return (ri - li + 1) / self._len, li, lv, ri, rv
 
+    # 方差系列, 对于长尾的非正态数据有点问题，暂时取消
     def normal(self):
         return self.n_std_value(1)
 
@@ -87,24 +88,20 @@ class Math:
 
         import matplotlib.pyplot as plt
         plt.xlabel("次数")
-        plt.title("人数")
-
-        plt.hist(self._nums,bins=100)
+        plt.ylabel("人数")
+        plt.hist(self._nums, bins=100)
         plt.show()
-        a = self.normal()
-        b = self.rare()
-        c = self.super_rare()
-        d = self.ultra_rare()
-        l = self._len
-        print("运气极好({:.4%}):{}次~{}次".format((d[1] - 1) / l, self._nums[0], self._nums[d[1] - 1]))
-        print("运气很好 ({:.4%}):{}次~{}次".format((c[1] - d[1]) / l, d[2], self._nums[c[1] - 1]))
-        print("运气 好 ({:.4%}):{}次~{}次".format((b[1] - c[1]) / l, c[2], self._nums[b[1] - 1]))
-        print("运气较好 ({:.4%}):{}次~{}次".format((a[1] - b[1]) / l, b[2], self._nums[a[1] - 1]))
-        print("运气常见({:.4%}):{}次~{}次".format(a[0], a[2], a[4]))
-        print("运气较差({:.4%}):{}次~{}次".format((b[3] - a[3]) / l, self._nums[a[3] + 1], b[4]))
-        print("运气 差({:.4%}):{}次~{}次".format((c[3] - b[3]) / l, self._nums[b[3] + 1], c[4]))
-        print("运气很差({:.4%}):{}次~{}次".format((d[3] - c[3]) / l, self._nums[c[3] + 1], d[4]))
-        print("运气极差({:.4%}):{}次~{}次".format((self._len - d[3]) / l, self._nums[d[3] + 1], self._nums[self._len - 1]))
+        print("欧皇：{}次".format(self._nums[0]))
+        print("运气极好(00.0%-00.1%):{}次~{}次".format(self._nums[0], self._nums[self._len // 1000] * 1))
+        print("运气超好(00.1%-01.0%):{}次~{}次".format(self._nums[self._len // 1000], self._nums[self._len // 100]))
+        print("运气很好(01.0%-10.0%):{}次~{}次".format(self._nums[self._len // 100], self._nums[self._len // 10]))
+        print("运气偏好(10.0%-40.0%):{}次~{}次".format(self._nums[self._len // 10], self._nums[self._len // 10 * 4]))
+        print("运气普通(40.0%-60.0%):{}次~{}次".format(self._nums[self._len // 10 * 4], self._nums[self._len // 10 * 6]))
+        print("运气偏差(60.0%-90.0%):{}次~{}次".format(self._nums[self._len // 10 * 6], self._nums[self._len // 10 * 9]))
+        print("运气很差(90.0%-99.0%):{}次~{}次".format(self._nums[self._len // 10 * 9], self._nums[self._len // 100 * 99]))
+        print("运气超差(99.0%-99.9%):{}次~{}次".format(self._nums[self._len // 100 * 99], self._nums[self._len // 1000 * 99]))
+        print("运气极差(99.9%-1.000):{}次~{}次".format(self._nums[self._len // 10] * 6, self._nums[self._len - 1]))
+        print("非酋：{}次".format(self._nums[self._len - 1]))
 
 
 if __name__ == '__main__':
