@@ -51,7 +51,7 @@ class Cards:
                 right = mid - 1
             elif v <= t:
                 left = mid + 1
-        return self.cards[left + 1]
+        return self.cards[right - 1]
 
     def reset(self):
         """
