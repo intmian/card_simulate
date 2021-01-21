@@ -87,11 +87,7 @@ class Math:
         print("标准差：", self._std)
         print("依次向下找到自己的运气区间即可")
 
-        import matplotlib.pyplot as plt
-        plt.xlabel("次数")
-        plt.ylabel("人数")
-        plt.hist(self._nums, bins=100)
-        plt.show()
+
         print("欧皇：{}次".format(self._nums[0]))
         print("运气极好(00.0%-00.1%):{}次~{}次".format(self._nums[0], self._nums[self._len // 1000] * 1))
         print("运气超好(00.1%-01.0%):{}次~{}次".format(self._nums[self._len // 1000], self._nums[self._len // 100]))
@@ -100,10 +96,15 @@ class Math:
         print("运气普通(40.0%-60.0%):{}次~{}次".format(self._nums[self._len // 10 * 4], self._nums[self._len // 10 * 6]))
         print("运气偏差(60.0%-90.0%):{}次~{}次".format(self._nums[self._len // 10 * 6], self._nums[self._len // 10 * 9]))
         print("运气很差(90.0%-99.0%):{}次~{}次".format(self._nums[self._len // 10 * 9], self._nums[self._len // 100 * 99]))
-        print("运气超差(99.0%-99.9%):{}次~{}次".format(self._nums[self._len // 100 * 99], self._nums[self._len // 1000 * 99]))
-        print("运气极差(99.9%-1.000):{}次~{}次".format(self._nums[self._len // 10] * 6, self._nums[self._len - 1]))
+        print("运气超差(99.0%-99.9%):{}次~{}次".format(self._nums[self._len // 100 * 99], self._nums[self._len // 1000 * 999]))
+        print("运气极差(99.9%-1.000):{}次~{}次".format(self._nums[self._len // 1000 * 999], self._nums[self._len - 1]))
         print("非酋：{}次".format(self._nums[self._len - 1]))
 
+        import matplotlib.pyplot as plt
+        plt.xlabel("次数")
+        plt.ylabel("人数")
+        plt.hist(self._nums, bins=100)
+        plt.show()
 
 if __name__ == '__main__':
     l = numpy.random.normal(200, 20, 10000000)
