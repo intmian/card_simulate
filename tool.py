@@ -161,7 +161,7 @@ if __name__ == '__main__':
     c.append(Card(0.025, "朱利奥"))
     c.append(Card(0.005, "利托里奥"))
     cards = Cards(c)
-    t = Target("可畏 and 扎拉 and 波拉 and 利托里奥", cards)
+    t = Target("可畏 and 扎拉 and 波拉 and 文琴佐 and 朱利奥 and 利托里奥", cards)
     g = []
     m = Mode(1, 10000)
     d = Drawer(m, cards, [], Limit(), t)

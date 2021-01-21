@@ -83,6 +83,7 @@ class Math:
     def output(self):
         print("数据总量：", self._len)
         print("均值：", self._mean)
+        print("中位值：", self._nums[self._len // 2])  # 因为数据量极大，所以就不考虑偶数取两数均值的情况了
         print("标准差：", self._std)
         print("依次向下找到自己的运气区间即可")
 
