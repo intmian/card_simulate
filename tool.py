@@ -40,6 +40,7 @@ class Cards:
         self.num = 0  # 已抽卡次数
         self.last_c_status = None  # 当保底模式为替换时，需要将最后一次的抽卡现场还原
 
+    # todo：将附带的统计功能解耦出去
     def normal_draw(self) -> Card:
         """
 普通的抽一张卡, 当cards概率之和不为1,会抽出一张被成为剩余卡的卡
@@ -66,6 +67,15 @@ class Cards:
         self.if_get[self.cards[index].name] = True
 
         return self.cards[index]
+
+    def lucky_draw(self) -> Card:
+        """
+不会抽到剩下的卡，仅用于保底随机
+        """
+        re = self.normal_draw()
+        while re.name == "剩下的卡":
+            re = self.normal_draw()
+        return re
 
     def reset(self):
         """
@@ -150,7 +160,7 @@ class Limit:
         self._if_r = if_reset
         self.how = how
         self._c = c
-        self._active = True  # 是否激活, 之所以不重置是为了迎合某些游戏的十连必出xxx的机制
+        self._active = True  # 是否激活, 之所以不立刻重置是为了迎合某些游戏的十连必出xxx的机制
 
     def reset(self):
         self._active = True
@@ -188,7 +198,7 @@ class Limit:
 
             re = None
             if self._way == 1:
-                re = self._g.cards.normal_draw()
+                re = self._g.cards.lucky_draw()
             elif self._way == 2:
                 low_c = None
                 low_p = 2
@@ -198,7 +208,7 @@ class Limit:
                         low_p = card.p
                 if low_p == 2:
                     # 全抽满却触发保底的情况
-                    re = self._g.cards.normal_draw()
+                    re = self._g.cards.lucky_draw()
                 else:
                     re = low_c
             self.reset()
@@ -260,6 +270,8 @@ class Drawer:
     def reset(self):
         self.used = False
         self._c.reset()
+        for l in self._l:
+            l.reset()
 
 
 if __name__ == '__main__':
