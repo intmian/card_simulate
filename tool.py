@@ -38,10 +38,11 @@ class Cards:
         self.cards_map["剩下的卡"] = c
         self.cards.append(c)
         self.num = 0  # 已抽卡次数
+        self.last_c_status = None  # 当保底模式为替换时，需要将最后一次的抽卡现场还原
 
     def normal_draw(self) -> Card:
         """
-普通的抽一张卡, 当cards概率之和不为1
+普通的抽一张卡, 当cards概率之和不为1,会抽出一张被成为剩余卡的卡
         :return: 享元的引用
         """
         self.num += 1
@@ -61,7 +62,9 @@ class Cards:
         index = 0
         while not self.p[index] > t:
             index += 1  # todo: 改成二分版的
+        self.last_c_status = self.if_get[self.cards[index].name]
         self.if_get[self.cards[index].name] = True
+
         return self.cards[index]
 
     def reset(self):
@@ -145,12 +148,20 @@ class Limit:
         self._count = 0
         self._way = way
         self._if_r = if_reset
-        self._how = how
+        self.how = how
         self._c = c
         self._active = True  # 是否激活, 之所以不重置是为了迎合某些游戏的十连必出xxx的机制
 
     def reset(self):
-        pass
+        self._active = True
+        self._count = 0
+
+    def will_trigger(self) -> bool:
+        """
+是否下一步就触发了
+        :return: 是/否
+        """
+        return self._count == self._n - 1
 
     def check(self, c: Card) -> (bool,) or (bool, Card, int):
         """
@@ -191,7 +202,7 @@ class Limit:
                 else:
                     re = low_c
             self.reset()
-            return True, re, self._how
+            return True, re, self.how
         else:
             return False,
 
@@ -205,12 +216,44 @@ class Drawer:
         self._t = t
         self.used = False
 
+    @Warning
     def draw_with_no_limit(self) -> int:
+        # 此方法已被废除
         self.used = True
 
         while not self._t.if_suc():
             for i in range(self._m.num):
                 self._c.normal_draw()
+
+        return self._c.num
+
+    def draw(self) -> int:
+        self.used = True
+
+        while not self._t.if_suc():
+            for i in range(self._m.num):
+                c = self._c.normal_draw()
+                for limit in self._l:
+                    # 先处理所有附加型的保底
+                    if limit.how == 2:
+                        re = limit.check(c)
+                        if re[0]:
+                            self._c.if_get[re[1].name] = True
+                triggered = False  # 是否已触发保底
+                for limit in self._l:
+                    # 处理所有替代型的保底
+                    if limit.how == 1:
+                        if limit.will_trigger():
+                            if not triggered:
+                                re = limit.check(c)
+                                if re[0]:
+                                    self._c.if_get[re[1].name] = True
+                                    self._c.if_get[c.name] = self._c.last_c_status  # 回复现场（因为上一次的抽卡结果被顶掉了）
+                                    triggered = True
+                            else:
+                                pass  # 不触发处理第一个以外的附加型保底
+                        else:
+                            re = limit.check(c)
 
         return self._c.num
 
