@@ -12,8 +12,8 @@ from tool import Drawer
 import math_tool
 
 if __name__ == '__main__':
-    #f = File(sys.argv[1])
-    f = File("例子.json")
+    f = File(sys.argv[1])
+    #f = File("例子.json")
     d = Drawer(f.mode, f.cards, f.groups, f.limits, f.target)
     re = []
     for i in range(f.mode.max):
