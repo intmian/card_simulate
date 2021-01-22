@@ -170,7 +170,7 @@ class Limit:
         :returns (是否触发保底, 保底结果, 给出方式)
         """
         self._count += 1
-        if c in self._g and self._count != self._n:
+        if c in self._g.cards.cards and self._count != self._n:
             # 当恰好在保底的那一发触发重置时，重置不生效
             r = self._if_r
             if r == 1:

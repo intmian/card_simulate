@@ -70,7 +70,7 @@ class File:
         self.groups = group
         self.limits = limit
         self.mode = mode
-        self.target = target
+        self.target = Target(target,self.cards)
 
 
 if __name__ == '__main__':
