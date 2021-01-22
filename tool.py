@@ -75,14 +75,14 @@ class Cards:
 
 class Group:
     # 卡类型 享元模式
-    def __init__(self, cards: list):
-        self.cards = cards
+    def __init__(self, cards: List):
+        self.cards = Cards(cards)  # 新建一个小型卡池，方便在group里面抽保底
 
 
 class Mode:
-    # 抽卡模式 享元模式
     def __init__(self, num=10, max_n=1000000):
         """
+抽卡模式 享元模式
         :param max_n:仿真多少抽
         :param num:  默认以多少连抽进行
         """
@@ -91,8 +91,13 @@ class Mode:
 
 
 class Target:
-    # 抽卡目标 享元模式
+
     def __init__(self, pattern: str, cards: Cards):
+        """
+抽卡目标 享元模式
+        :param pattern: 条件
+        :param cards: 卡池
+        """
         self.cards = cards
 
         self.parts = []
@@ -125,12 +130,74 @@ class Target:
 
 
 class Limit:
-    # 保底
-    pass  # TODO
+    def __init__(self, g: Group, n: int, way: int, if_reset: int, how: int, c: Cards):
+        """
+保底
+        :param g: 保底类目
+        :param n: 保底抽数
+        :param way: 随机还是给出尚未抽到的 1 随机 2 未抽到的
+        :param if_reset: 当抽出保底卡后，是否重置保底 1 抽出后立刻重置count（幻书启示录） 2 抽出后不重置count，但不再触发（pcr 二星保底） 3 无（pcr 井）
+        :param how: 如何给出保底，1代表替换 2代表附加
+        :param c: 卡池
+        """
+        self._g = g
+        self._n = n
+        self._count = 0
+        self._way = way
+        self._if_r = if_reset
+        self._how = how
+        self._c = c
+        self._active = True  # 是否激活, 之所以不重置是为了迎合某些游戏的十连必出xxx的机制
+
+    def reset(self):
+        pass
+
+    def check(self, c: Card) -> (bool,) or (bool, Card, int):
+        """
+校验是否触发保底
+        :param c:卡
+        :returns (是否触发保底, 保底结果, 给出方式)
+        """
+        self._count += 1
+        if c in self._g and self._count != self._n:
+            # 当恰好在保底的那一发触发重置时，重置不生效
+            r = self._if_r
+            if r == 1:
+                self.reset()
+                return False,
+            elif r == 2:
+                self._active = False
+                return False,
+            elif r == 3:
+                return False,
+        elif self._count == self._n:
+            if not self._active:
+                self.reset()
+                return False,
+
+            re = None
+            if self._way == 1:
+                re = self._g.cards.normal_draw()
+            elif self._way == 2:
+                low_c = None
+                low_p = 2
+                for card in self._g.cards.cards:
+                    if not self._c.if_get[card.name] and card.p < low_p:
+                        low_c = card
+                        low_p = card.p
+                if low_p == 2:
+                    # 全抽满却触发保底的情况
+                    re = self._g.cards.normal_draw()
+                else:
+                    re = low_c
+            self.reset()
+            return True, re, self._how
+        else:
+            return False,
 
 
 class Drawer:
-    def __init__(self, m: Mode, c: Cards, g: List[Group], l: Limit, t: Target):
+    def __init__(self, m: Mode, c: Cards, g: List[Group], l: List[Limit], t: Target):
         self._m = m
         self._c = c
         self._g = g
@@ -161,10 +228,10 @@ if __name__ == '__main__':
     c.append(Card(0.025, "朱利奥"))
     c.append(Card(0.005, "利托里奥"))
     cards = Cards(c)
-    t = Target("波拉 and 利托里奥", cards)
+    t = Target("波拉", cards)
     g = []
     m = Mode(1, 10000)
-    d = Drawer(m, cards, [], Limit(), t)
+    d = Drawer(m, cards, [], [], t)
     l = []
     for i in range(m.max):
         l.append(d.draw_with_no_limit())

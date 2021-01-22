@@ -81,12 +81,14 @@ class Math:
         return self.n_std_value(4)
 
     def output(self):
+        """
+输出结果
+        """
         print("数据总量：", self._len)
         print("均值：", self._mean)
         print("中位值：", self._nums[self._len // 2])  # 因为数据量极大，所以就不考虑偶数取两数均值的情况了
         print("标准差：", self._std)
         print("依次向下找到自己的运气区间即可")
-
 
         print("欧皇：{}次".format(self._nums[0]))
         print("运气极好(00.0%-00.1%):{}次~{}次".format(self._nums[0], self._nums[self._len // 1000] * 1))
@@ -96,7 +98,8 @@ class Math:
         print("运气普通(40.0%-60.0%):{}次~{}次".format(self._nums[self._len // 10 * 4], self._nums[self._len // 10 * 6]))
         print("运气偏差(60.0%-90.0%):{}次~{}次".format(self._nums[self._len // 10 * 6], self._nums[self._len // 10 * 9]))
         print("运气很差(90.0%-99.0%):{}次~{}次".format(self._nums[self._len // 10 * 9], self._nums[self._len // 100 * 99]))
-        print("运气超差(99.0%-99.9%):{}次~{}次".format(self._nums[self._len // 100 * 99], self._nums[self._len // 1000 * 999]))
+        print(
+            "运气超差(99.0%-99.9%):{}次~{}次".format(self._nums[self._len // 100 * 99], self._nums[self._len // 1000 * 999]))
         print("运气极差(99.9%-1.000):{}次~{}次".format(self._nums[self._len // 1000 * 999], self._nums[self._len - 1]))
         print("非酋：{}次".format(self._nums[self._len - 1]))
 
@@ -105,6 +108,7 @@ class Math:
         plt.ylabel("人数")
         plt.hist(self._nums, bins=100)
         plt.show()
+
 
 if __name__ == '__main__':
     l = numpy.random.normal(200, 20, 10000000)
