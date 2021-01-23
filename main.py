@@ -39,5 +39,6 @@ if __name__ == '__main__':
             sys.stdout.flush()
         re.append(d.draw())
         d.reset()
+    print("")
     m = math_tool.Math(re)
     m.output()
