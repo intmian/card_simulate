@@ -7,6 +7,13 @@ DESCRIBE: 数学运算
 import numpy
 import typing
 
+from matplotlib.ticker import FuncFormatter
+import matplotlib.pyplot as plt
+
+
+def to_percent(y, position):
+    return str(100 * y) + '%'
+
 
 def binary_search_in(arr, l, r, v):
     m = (l + r) // 2
@@ -103,10 +110,15 @@ class Math:
         print("运气极差(99.9%-1.000):{}次~{}次".format(self._nums[self._len // 1000 * 999], self._nums[self._len - 1]))
         print("非酋：{}次".format(self._nums[self._len - 1]))
 
-        import matplotlib.pyplot as plt
+        # plt.hist(self._nums, bins=100)
+        # plt.show()
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        plt.rcParams['axes.unicode_minus'] = False
         plt.xlabel("次数")
         plt.ylabel("人数")
-        plt.hist(self._nums, bins=100)
+        plt.hist(self._nums, bins=100, weights=[1. / len(self._nums)] * len(self._nums))
+        formatter = FuncFormatter(to_percent)
+        plt.gca().yaxis.set_major_formatter(formatter)
         plt.show()
 
 
