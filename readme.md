@@ -13,7 +13,8 @@
 2. 在根目录输入`python main.py 你想要的.json`
 3. 等待数据跑完，如出现了任何错误请重新审阅配置文件是否配置完备，再不行请发issue。
 4. 结果一般类似于如下图，有文字及分布直方图（直方图中间有时会出现断崖式空隙，属于bug）。
-![Snipaste_2021-01-22_21-50-59.png](https://i.loli.net/2021/01/22/7NiUo3VtyfcE1Ca.png)
+![图片](https://i.loli.net/2021/01/23/M4PwJT6qhl7kEZN.png)
+
 ## 配置
 
 ```
