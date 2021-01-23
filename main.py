@@ -33,12 +33,12 @@ if __name__ == '__main__':
     sys.stdout.flush()  # 不然会不输出
 
     for i in range(f.mode.max - 1000):
-        # todo：当小于100次时会出问题的
-        if i != 0 and i % (f.mode.max // 50) == 0:
-            print("▢", end="")
-            sys.stdout.flush()
+        # todo：当小于1000次时会出问题的,回头修成百分比好了
         re.append(d.draw())
         d.reset()
+        if i != 0 and (i + 1) % (f.mode.max // 50) == 0:
+            print("▢", end="")
+            sys.stdout.flush()
     print("")
     m = math_tool.Math(re)
     m.output()
