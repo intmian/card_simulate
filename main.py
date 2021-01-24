@@ -36,7 +36,7 @@ if __name__ == '__main__':
         # todo：当小于1000次时会出问题的,回头修成百分比好了
         re.append(d.draw())
         d.reset()
-        if i != 0 and (i + 1) % (f.mode.max // 50) == 0:
+        if i != 0 and (i + 1) % ((f.mode.max - 1000) // 50) == 0:
             print("▢", end="")
             sys.stdout.flush()
     print("")
