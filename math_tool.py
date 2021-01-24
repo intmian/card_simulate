@@ -116,7 +116,13 @@ class Math:
         plt.rcParams['axes.unicode_minus'] = False
         plt.xlabel("次数")
         plt.ylabel("人数")
-        plt.hist(self._nums, bins=100, weights=[1. / len(self._nums)] * len(self._nums))
+        bins = (self._nums[self._len - 1] - self._nums[0]) // 10
+        if (self._nums[self._len - 1] - self._nums[0]) % 10 != 0:
+            bins += 1
+        # 保证每10个数据一格
+        plt.hist(self._nums, bins=bins,
+                 weights=[1. / len(self._nums)] * len(self._nums))
+
         formatter = FuncFormatter(to_percent)
         plt.gca().yaxis.set_major_formatter(formatter)
         plt.show()
