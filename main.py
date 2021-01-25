@@ -15,8 +15,8 @@ import math_tool
 
 if __name__ == '__main__':
     print("初始化")
-    # f = File(sys.argv[1])
-    f = File("例子.json")
+    f = File(sys.argv[1])
+    # f = File("例子.json")
     d = Drawer(f.mode, f.cards, f.groups, f.limits, f.target)
     re = []
     print("仿真中")
